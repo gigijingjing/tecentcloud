@@ -1,0 +1,117 @@
+<div class="gray-panel">
+    <div class="paoduct-title-panel">
+        <h1 id="name" class="product-h1">
+
+        </h1>
+        <span id="tags">
+        <a class="am-badge am-badge-warning am-round">参考日利率0.4%</a>
+        &nbsp;<a class="am-badge am-badge-primary am-round">实名手机</a>&nbsp;
+        <a class="am-badge am-badge-danger am-round">一次还清</a>
+      </span>
+        <p><span class="bold">产品人气：</span>
+            <a class="am-badge am-badge-secondary " style="width:140px;text-align: right;background: linear-gradient(to right, #a3def7,#08acf1);">爆款</a><span id="popularity" style="font-size:8px;color:#ddd;">&nbsp;&nbsp;10.8万人申请</span></p>
+        <p><span class="bold">放款速度：</span>
+            <a class="am-badge am-badge-secondary " style="width:100px;text-align: right;background: linear-gradient(to right, #a3def7,#08acf1);">爆款</a><span id="loan_speed" style="font-size:8px;color:#ddd;">&nbsp;&nbsp;10.8万人申请</span></p>
+        <p><span class="bold">下款概率：</span>
+            <a class="am-badge am-badge-secondary " style="width:90px;text-align: right;background: linear-gradient(to right, #a3def7,#08acf1);">爆款</a><span id="loan_ratio" style="font-size:8px;color:#ddd;">&nbsp;&nbsp;10.8万人申请</span></p>
+    </div>
+    <div class="my-search-title-panel">
+        <img id="banner" src="" class="am-img-responsive" alt=""/>
+    </div>
+</div>
+<!-- 商品详情 -->
+
+<div data-am-widget="tabs" class="am-tabs am-tabs-d2">
+    <ul class="am-tabs-nav am-cf">
+        <li class="am-active" id="content_tab">
+            <a>产品详情</a>
+        </li>
+        <li class="" id="comment_tab">
+            <a>用户评论</a>
+        </li>
+    </ul>
+    <div class="am-tabs-bd" >
+        <div id="content" class="am-tab-panel am-active" style="font-size: 10px;color:gray;">
+
+        </div>
+        <div id="comment" class="am-tab-panel">
+            <div id="scrollDiv">
+                <ul class="am-list am-list-static am-list-border am-list-striped am-text-sm">
+                    <li>欧阳小姐成功借款了2000元</li>
+                    <li>赵先生成功借到了8000元</li>
+                    <li>周先生成功贷到了10000元</li>
+                    <li>张先生成功借款了6000元</li>
+                    <li>李小姐成功借了3000元</li>
+                    <li>马先生成功贷了20000元</li>
+                    <li>王小姐成功贷到了5500元</li>
+                    <li>何小姐成功贷到了1000元</li>
+                    <li>黄先生成功贷到了3500元</li>
+                    <li>将小姐成功贷到了5500元</li>
+                    <li>高先生成功贷到了2500元</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--底部-->
+<div data-am-widget="navbar" class="am-navbar am-cf my-nav-footer " id="">
+    <ul class="am-navbar-nav am-cf am-avg-sm-3 my-footer-ul">
+        <li>
+            <a id="url" href="">
+                <span class="am-navbar-label" style="font-size:20px;">立&nbsp;即&nbsp;申&nbsp;请&nbsp;</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<script>
+
+    $('#content_tab').click(function () {
+        $(this).addClass('am-active');
+        $('#comment_tab').removeClass('am-active');
+        $('#content').addClass('am-active');
+        $('#comment').removeClass('am-active');
+    });
+
+    $('#comment_tab').click(function () {
+        $(this).addClass('am-active');
+        $('#content_tab').removeClass('am-active');
+        $('#comment').addClass('am-active');
+        $('#content').removeClass('am-active');
+    });
+
+    $(document).ready(function(){
+        $("#scrollDiv").textSlider({line:4,speed:800,timer:3000});
+    });
+
+    app.page.loadPage(function() {
+        app.page.config.title = '贷款产品详情页';
+        app.page.config.pageTitle = '产品详情';
+        app.page.config.appMenu = false;
+        app.product.detail(app.page.data.id).then((data) => {
+
+            let nameHtml = '<img class="am-circle" src="'+data.logo+'" width="60" height="60" />';
+            nameHtml +='&nbsp;' + data.name;
+            $('#name').html(nameHtml)
+
+            if (data.tags) {
+                let tags = data.tags.split(',');
+                let tagsHtml = '';
+                let index = 0;
+                while (index < tags.length) {
+                    tagsHtml += '<a class="am-badge am-badge-warning am-round">'+tags[index]+'</a>&nbsp;';
+                    index ++;
+                }
+                $('#tags').html(tagsHtml)
+            }
+
+            $('#popularity').html('&nbsp;&nbsp;' + data.popularity)
+            $('#loan_speed').html('&nbsp;&nbsp;' + data.loan_speed)
+            $('#loan_ratio').html('&nbsp;&nbsp;' + data.loan_ratio + '%')
+            $('#banner').attr('src', data.banner_url)
+            $('#content').html(data.content)
+            $('#url').attr('href', data.url)
+        });
+    });
+</script>

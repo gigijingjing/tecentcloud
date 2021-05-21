@@ -1,0 +1,95 @@
+<div data-am-widget="slider" class="am-slider am-slider-a1" data-am-slider='{&quot;directionNav&quot;:false}'>
+    <ul class="am-slides">
+        <li>
+            <img src="resource/images/sujie2.jpg">
+        </li>
+        <li>
+            <img src="resource/images/sujie1.jpg">
+        </li>
+    </ul>
+</div>
+<div>
+    <ul class="am-avg-sm-3 am-thumbnails" style="margin-left:25px;padding:5px;padding-bottom:0px;">
+        <li><a href="javascript:app.page.open('product/small-amount');"><img class="am-circle"  src="resource/images/d1.jpg" width="60" height="60" /></a></li>
+        <li><a href="javascript:app.page.open('product/fast');"><img class="am-circle"  src="resource/images/d2.jpg" width="60" height="60" /></a></li>
+        <li><a href="javascript:app.page.open('product/popular');"><img class="am-circle"  src="resource/images/d3.jpg" width="60" height="60" /></a></li>
+    </ul>
+    <ul class="am-avg-sm-3" style="margin-left:35px;padding-top:0px;padding-bottom:5px;">
+        <li><a href="javascript:app.page.open('product/small-amount');"><span>小额极速</span></a></li>
+        <li><a href="javascript:app.page.open('product/fast');"><span>&nbsp;大额低息</span></a></li>
+        <li><a href="javascript:app.page.open('product/popular');"><span>&nbsp;热门推荐</span></a></li>
+    </ul>
+</div>
+<div class="am-panel am-panel-default">
+    <div class="am-panel-hd"><span style="font-weight:bold;color:red;">热门推荐:</span><span style="color:red;">&nbsp;申请3家以上,下款率达90%!</span></div>
+    <div id="popular" class="am-panel-bd">
+
+    </div>
+</div>
+<div class="am-panel am-panel-default">
+    <ul class="am-avg-sm-2">
+        <li><a href="javascript:app.page.open('product/fast');"><img class="am-thumbnail" src="resource/images/ad12.jpg" /></a></li>
+        <li><a href="javascript:app.page.open('product/popular');"><img class="am-thumbnail" src="resource/images/6.jpg" /></a></li>
+    </ul>
+</div>
+<div class="am-panel am-panel-default">
+    <div class="am-panel-hd"><span style="font-weight:bold;color:red;">新品入驻:</span><span style="color:red">&nbsp;申请3家以上,下款率达90%!</span>
+        <!--<span style="float:right; ">换一批&nbsp;></span>-->
+    </div>
+    <div id="new" class="am-panel-bd">
+
+    </div>
+</div>
+
+<script>
+    app.page.loadPage(function(){
+        app.page.config.title = '多易贷';
+        app.page.config.pageTitle = '多易贷';
+
+        app.product.home().then((data) => {
+            $('#new').html(loadHtml(data.new));
+            $('#popular').html(loadHtml(data.popular));
+        });
+
+        function loadHtml(data) {
+            let index = 0;
+            let html = '';
+            while (index < data.length) {
+
+                if (index === 0) {
+                    html += '<ul class="am-avg-sm-4">';
+                }
+
+                html += '<li>';
+                html += '<a href="javascript:app.page.open(\'product/detail\', {id: '+data[index].id+'});">';
+                html += '<img class="am-circle"  src="'+data[index].logo+'" width="55" height="55" />';
+                html += '</a>';
+                html += '</li>';
+
+                html += '<li>';
+                html += '<a href="javascript:app.page.open(\'product/detail\', {id: '+data[index].id+'});">';
+                html += '<span>'+data[index].name+'</span><br>';
+                html += '<span style="font-size:9px;">'+data[index].loan_range+'&nbsp;&nbsp;</span>';
+                html += '<p style="font-size:8px; color:red;margin: 0px;padding: 0px;">'+data[index].loan_ratio+'%</p>';
+                html += '</a>';
+                html += '</li>';
+
+                if ((index + 1) / 2 === 0) {
+                    html += '</ul>';
+                    if (index + 1 !== data.length) {
+                        html += '<ul class="am-avg-sm-4">';
+                    }
+                }
+
+                if ((index + 1) === data.length) {
+
+                    html += '</ul>';
+                }
+                index ++;
+            }
+
+            return html;
+        }
+    });
+</script>
+

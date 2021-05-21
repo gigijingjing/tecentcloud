@@ -1,0 +1,136 @@
+<div data-backend-compiled>
+<article data-am-widget="paragraph" class="am-paragraph"
+data-am-paragraph="{tableScrollable:true,pureview:true}">
+<img src="resource/images/qqh.png">
+</div>
+<div class="cart-panel">
+    <form class="am-form">
+        <div class="am-form-group am-form-icon">
+            <i class="am-icon-user" style="color:#329cd9"></i>
+            <input type="text" id="mobileInput" class="am-form-field  my-radius" placeholder="填写手机号码">
+        </div>
+         <div class="am-form-group am-form-icon"> 
+              <div class="captcha-img">
+                <img id="captcha" src="多易贷注册验证码"  style="width: 100px;">
+            </div>
+             <div class="captcha-input">
+             <input type="text" id="captchaInput" class="am-form-field my-radius" placeholder="输入右侧图片结果">
+            </div>
+        </div>
+        <div class="am-form-group am-form-icon am-form am-form-inline">
+             <div class="captcha-input">
+         <i class="am-icon-lock" style="color:#329cd9"></i>
+            <input type="text" id="codeInput" class="am-form-field  my-radius" placeholder="输入短信验证码">
+        </div>
+
+           <div class="captcha-input"><button type="button" id="getCodeBtn" class="am-btn am-btn-default am-radius">
+                &nbsp;获取短信验证码 </button>
+            </div>
+        </div>
+        <p class="am-text-center">
+            <button type="button" id="registerBtn" class="am-btn am-btn-danger am-radius am-btn-block">
+                立即注册
+            </button>
+        </p>
+        <p class="am-text-center">
+            <button type="button" id="loginBtn" class="am-btn am-btn-default am-radius am-btn-block">
+                已有账号，前往登录
+            </button>
+        </p>
+    </form>
+</div>
+<script>
+    app.page.loadPage(function() {
+        app.page.config.title = '用户注册';
+        app.page.config.pageTitle = '用户注册';
+        app.page.config.appMenu = false;
+
+        // 获取验证码
+        function getCaptcha() {
+            app.auth.captchaSrc().then((data) => {
+                $('#captcha').attr('src', data);
+            }, (error) => {
+                if (error.message.mobile) {
+                    alert(error.message.mobile);
+                } else {
+                    alert(error.message);
+                }
+            });
+        }
+        getCaptcha();
+
+        $('#captcha').click(() => {
+            getCaptcha();
+        });
+
+        $('#loginBtn').click(() => {
+            app.page.login(true);
+        });
+
+        var getCodeBtn = $('#getCodeBtn');
+
+        // 计时器
+        function timer(second) {
+            if (second > 1) {
+                second --;
+                getCodeBtn.attr('disabled', true);
+                getCodeBtn.html('&nbsp;&nbsp;再次发送（' + second + '）');
+                setTimeout(function(){
+                    timer(second);
+                }, 1000);
+            } else {
+                getCodeBtn.attr('disabled', false);
+                getCodeBtn.html('&nbsp;&nbsp;获取短信验证码');
+            }
+        }
+
+        getCodeBtn.click(() => {
+            let mobile = $('#mobileInput').val();
+            if (!mobile) {
+                alert('请填写手机号');
+                return;
+            }
+            let captcha = $('#captchaInput').val();
+            if (!captcha) {
+                alert('请输入验证答案');
+                return;
+            }
+            app.auth.sendCode(mobile, captcha).then((data) => {
+                alert(data.message);
+                timer(data.retry_second);
+            }, (error) => {
+                if (error.message.mobile) {
+                    alert(error.message.mobile);
+                } else {
+                    alert(error.message);
+                }
+                getCaptcha();
+            });
+        });
+
+        $('#registerBtn').click(() => {
+            let mobile = $('#mobileInput').val();
+            let code = $('#codeInput').val();
+            if (!mobile) {
+                alert('请填写手机号');
+                return;
+            }
+            if (!code) {
+                alert('请填写验证码');
+                return;
+            }
+            app.auth.register(mobile, code).then((data) => {
+                app.page.home();
+            }, (error) => {
+                if (error.message.mobile) {
+                    alert(error.message.mobile);
+                } else if (error.message.code) {
+                    alert(error.message.code);
+                } else {
+                    alert(error.message);
+                }
+                getCaptcha();
+            });
+        });
+    });
+</script>

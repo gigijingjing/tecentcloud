@@ -1,0 +1,96 @@
+<div class="gray-panel" style="height:30px;">
+    <span style="color:red;font-size:14px;">&nbsp;&nbsp;&nbsp;&nbsp;注意:办理三种以上下款机率更大奥！</span>
+</div>
+
+<div id="list">
+
+</div>
+<footer data-am-widget="footer" class="am-footer am-footer-default" data-am-footer="{  }">
+    <div class="am-footer-miscs ">
+        <p id="loadText">上拉发现新产品</p>
+    </div>
+</footer>
+<script>
+    app.page.loadPage(function(page) {
+        app.page.config.title = '多易贷-借款产品大全,申请3种以上下款机率更大奥！';
+        app.page.config.pageTitle = '多易贷产品大全';
+
+        // 当前分页
+        var currentPage = 1;
+        // 最大分页
+        var maxPage = 0;
+        // 上拉加载更多
+        var isload = false;
+        $(window).scroll(function() {
+            //当时滚动条离底部60px时开始加载下一页的内容
+            if (!isload && ($(window).height() + $(window).scrollTop() + 60) >= $(document).height()) {
+                isload = true;
+                if (currentPage === maxPage) {
+                    return;
+                }
+                if (page === app.page.currentPage) {
+                    loadData(currentPage + 1);
+                }
+            }
+        });
+        // 加载数据
+        function loadData(page) {
+            app.product.list('popular', page).then((data) => {
+                isload = false;
+                currentPage = data.current_page;
+                maxPage = Math.ceil(data.total/data.per_page);
+                if (currentPage === maxPage) {
+                    $('#loadText').text('没有更多了');
+                }
+                let html = '';
+                let index = 0;
+                while (index < data.data.length) {
+                    let product = data.data[index];
+                    html += '<div class="am-cf" style="padding:10px;margin:0px;">';
+
+                    html += '<div class="am-fl">';
+                    html += '<a href="javascript:app.page.open(\'product/detail\', {id: '+product.id+'});">';
+                    html += '<img class="am-circle" src="'+product.logo+'" width="80" height="80" />';
+                    html += '</a>';
+                    html += '</div>';
+
+                    html += '<div class="am-fl">';
+                    html += '<a href="javascript:app.page.open(\'product/detail\', {id: '+product.id+'});">';
+                    html += '<span>'+product.name+'</span>';
+                    html += '</a>';
+
+                    html += '<p style="color:orange;margin:0px;padding: 0px;">';
+                    let starIndex = 0;
+                    while (starIndex < product.star) {
+                        html += '<span class="am-icon-star"></span>';
+                        starIndex ++;
+                    }
+                    html += '</p>';
+
+                    if (product.tags) {
+                        let tags = product.tags.split(',');
+                        let tagindex = 0;
+                        while (tagindex < tags.length) {
+                            html += '<a class="am-badge am-badge-primary am-round">'+tags[tagindex]+'</a>&nbsp;';
+                            tagindex ++;
+                        }
+                    }
+                    html += '</div>';
+
+                    html += '<div class="am-fr">';
+                    html += '<span style="color:red;font-size:14px; font-weight: bolder;">TOP'+(index+1)+'</span>';
+                    html += '<p style="color:orange;margin: 0px;padding: 0px;">';
+                    html += '<span style="font-size:10px">'+product.popularity+'&nbsp;&nbsp;</span>';
+                    html += '</p>';
+                    html += '</div>';
+
+                    html += '</div>';
+                    index ++;
+                }
+                $('#list').append(html);
+            });
+        }
+        // 默认调一次
+        loadData(currentPage);
+    });
+</script>
